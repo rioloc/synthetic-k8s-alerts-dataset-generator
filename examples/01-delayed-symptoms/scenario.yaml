@@ -1,0 +1,52 @@
+# Hand-checkable shared origin: firing intervals [100,220), [120,190), [145,235).
+# Synthetic fixture: no production-derived data or timing statistics.
+scenario_id: 01-delayed-symptoms
+version: '0.1'
+incidents:
+- incident_template_id: node-failure
+  reference_incident_id: incident-node-a
+  target:
+    node: node-a
+  start:
+    distribution: fixed
+    seconds: 100
+  alerts:
+  - role: primary
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      node: node-a
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 120
+    observation_delay_seconds: 5
+  - role: target-down
+    alertname: TargetDown
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      instance: node-a
+    delay:
+      distribution: fixed
+      seconds: 20
+    duration:
+      distribution: fixed
+      seconds: 70
+    observation_delay_seconds: 10
+  - role: unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      node: node-a
+    delay:
+      distribution: fixed
+      seconds: 45
+    duration:
+      distribution: fixed
+      seconds: 90
+    observation_delay_seconds: 2

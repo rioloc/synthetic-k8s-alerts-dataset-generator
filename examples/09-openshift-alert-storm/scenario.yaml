@@ -1,0 +1,3687 @@
+# 200 explicit alert episodes / 41 oracle incidents across two fictitious clusters.
+# Fault combinations and timing are authored synthetic assumptions, not production statistics.
+# AI-assisted authoring; see ../README.md for the v1 manifest/card provenance limitation.
+# No PromQL evaluation, alert-inhibition simulation, live systems, or external data at runtime.
+# OpenShift release-4.18 rule baseline (immutable commits):
+# https://github.com/openshift/cluster-monitoring-operator/tree/83ca2e8cd96f4edf1cf709f9b9da6b0ec1d67db8/assets
+# https://github.com/openshift/cluster-etcd-operator/blob/3af8b9d6ceb707462af67ebbda92ec4c2b341d81/manifests/0000_90_etcd-operator_03_prometheusrule.yaml
+# Sources, rule-specific caveats, partition sizes, and usage: ../README.md, section 09.
+scenario_id: 09-openshift-alert-storm
+version: '0.1'
+incidents:
+- incident_template_id: node-outage-flapping
+  reference_incident_id: incident-node-01
+  target:
+    cluster: synthetic-east
+    node: worker-01
+  start:
+    distribution: uniform
+    min_seconds: 0
+    max_seconds: 300
+  alerts:
+  - role: node-unready-first
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-01
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1100
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-01
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 960
+      max_seconds: 1260
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1800
+    observation_delay_seconds: 45
+  - role: pod-unknown-first
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: worker-agent-01-a
+    delay:
+      distribution: uniform
+      min_seconds: 1000
+      max_seconds: 1300
+    duration:
+      distribution: lognormal
+      median_seconds: 2100
+      sigma: 0.25
+    observation_delay_seconds: 90
+  - role: node-unready-again
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-01
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 4200
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: pod-unknown-second
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: worker-agent-01-b
+    delay:
+      distribution: uniform
+      min_seconds: 1050
+      max_seconds: 1350
+    duration:
+      distribution: lognormal
+      median_seconds: 1800
+      sigma: 0.3
+    observation_delay_seconds: 120
+- incident_template_id: node-outage-flapping
+  reference_incident_id: incident-node-02
+  target:
+    cluster: synthetic-west
+    node: worker-01
+  start:
+    distribution: uniform
+    min_seconds: 0
+    max_seconds: 300
+  alerts:
+  - role: node-unready-first
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-01
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1100
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-01
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 960
+      max_seconds: 1260
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1800
+    observation_delay_seconds: 45
+  - role: pod-unknown-first
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: worker-agent-01-a
+    delay:
+      distribution: uniform
+      min_seconds: 1000
+      max_seconds: 1300
+    duration:
+      distribution: lognormal
+      median_seconds: 2100
+      sigma: 0.25
+    observation_delay_seconds: 90
+  - role: node-unready-again
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-01
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 4200
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: pod-unknown-second
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: worker-agent-01-b
+    delay:
+      distribution: uniform
+      min_seconds: 1050
+      max_seconds: 1350
+    duration:
+      distribution: lognormal
+      median_seconds: 1800
+      sigma: 0.3
+    observation_delay_seconds: 120
+- incident_template_id: node-outage-flapping
+  reference_incident_id: incident-node-03
+  target:
+    cluster: synthetic-east
+    node: worker-02
+  start:
+    distribution: uniform
+    min_seconds: 1800
+    max_seconds: 2100
+  alerts:
+  - role: node-unready-first
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-02
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1100
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-02
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 960
+      max_seconds: 1260
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1800
+    observation_delay_seconds: 45
+  - role: pod-unknown-first
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: worker-agent-02-a
+    delay:
+      distribution: uniform
+      min_seconds: 1000
+      max_seconds: 1300
+    duration:
+      distribution: lognormal
+      median_seconds: 2100
+      sigma: 0.25
+    observation_delay_seconds: 90
+  - role: node-unready-again
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-02
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 4200
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: pod-unknown-second
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: worker-agent-02-b
+    delay:
+      distribution: uniform
+      min_seconds: 1050
+      max_seconds: 1350
+    duration:
+      distribution: lognormal
+      median_seconds: 1800
+      sigma: 0.3
+    observation_delay_seconds: 120
+- incident_template_id: node-outage-flapping
+  reference_incident_id: incident-node-04
+  target:
+    cluster: synthetic-west
+    node: worker-02
+  start:
+    distribution: uniform
+    min_seconds: 1800
+    max_seconds: 2100
+  alerts:
+  - role: node-unready-first
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-02
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1100
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-02
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 960
+      max_seconds: 1260
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1800
+    observation_delay_seconds: 45
+  - role: pod-unknown-first
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: worker-agent-02-a
+    delay:
+      distribution: uniform
+      min_seconds: 1000
+      max_seconds: 1300
+    duration:
+      distribution: lognormal
+      median_seconds: 2100
+      sigma: 0.25
+    observation_delay_seconds: 90
+  - role: node-unready-again
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-02
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 4200
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: pod-unknown-second
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: worker-agent-02-b
+    delay:
+      distribution: uniform
+      min_seconds: 1050
+      max_seconds: 1350
+    duration:
+      distribution: lognormal
+      median_seconds: 1800
+      sigma: 0.3
+    observation_delay_seconds: 120
+- incident_template_id: node-outage-flapping
+  reference_incident_id: incident-node-05
+  target:
+    cluster: synthetic-east
+    node: worker-03
+  start:
+    distribution: uniform
+    min_seconds: 3600
+    max_seconds: 3900
+  alerts:
+  - role: node-unready-first
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-03
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1100
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-03
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 960
+      max_seconds: 1260
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1800
+    observation_delay_seconds: 45
+  - role: pod-unknown-first
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: worker-agent-03-a
+    delay:
+      distribution: uniform
+      min_seconds: 1000
+      max_seconds: 1300
+    duration:
+      distribution: lognormal
+      median_seconds: 2100
+      sigma: 0.25
+    observation_delay_seconds: 90
+  - role: node-unready-again
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-03
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 4200
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: pod-unknown-second
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: worker-agent-03-b
+    delay:
+      distribution: uniform
+      min_seconds: 1050
+      max_seconds: 1350
+    duration:
+      distribution: lognormal
+      median_seconds: 1800
+      sigma: 0.3
+    observation_delay_seconds: 120
+- incident_template_id: node-outage-flapping
+  reference_incident_id: incident-node-06
+  target:
+    cluster: synthetic-west
+    node: worker-03
+  start:
+    distribution: uniform
+    min_seconds: 3600
+    max_seconds: 3900
+  alerts:
+  - role: node-unready-first
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-03
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1100
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-03
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 960
+      max_seconds: 1260
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1800
+    observation_delay_seconds: 45
+  - role: pod-unknown-first
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: worker-agent-03-a
+    delay:
+      distribution: uniform
+      min_seconds: 1000
+      max_seconds: 1300
+    duration:
+      distribution: lognormal
+      median_seconds: 2100
+      sigma: 0.25
+    observation_delay_seconds: 90
+  - role: node-unready-again
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-03
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 4200
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: pod-unknown-second
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: worker-agent-03-b
+    delay:
+      distribution: uniform
+      min_seconds: 1050
+      max_seconds: 1350
+    duration:
+      distribution: lognormal
+      median_seconds: 1800
+      sigma: 0.3
+    observation_delay_seconds: 120
+- incident_template_id: node-outage-flapping
+  reference_incident_id: incident-node-07
+  target:
+    cluster: synthetic-east
+    node: worker-04
+  start:
+    distribution: uniform
+    min_seconds: 5400
+    max_seconds: 5700
+  alerts:
+  - role: node-unready-first
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-04
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1100
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-04
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 960
+      max_seconds: 1260
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1800
+    observation_delay_seconds: 45
+  - role: pod-unknown-first
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: worker-agent-04-a
+    delay:
+      distribution: uniform
+      min_seconds: 1000
+      max_seconds: 1300
+    duration:
+      distribution: lognormal
+      median_seconds: 2100
+      sigma: 0.25
+    observation_delay_seconds: 90
+  - role: node-unready-again
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-04
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 4200
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: pod-unknown-second
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: worker-agent-04-b
+    delay:
+      distribution: uniform
+      min_seconds: 1050
+      max_seconds: 1350
+    duration:
+      distribution: lognormal
+      median_seconds: 1800
+      sigma: 0.3
+    observation_delay_seconds: 120
+- incident_template_id: node-outage-flapping
+  reference_incident_id: incident-node-08
+  target:
+    cluster: synthetic-west
+    node: worker-04
+  start:
+    distribution: uniform
+    min_seconds: 5400
+    max_seconds: 5700
+  alerts:
+  - role: node-unready-first
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-04
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1100
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-04
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 960
+      max_seconds: 1260
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1800
+    observation_delay_seconds: 45
+  - role: pod-unknown-first
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: worker-agent-04-a
+    delay:
+      distribution: uniform
+      min_seconds: 1000
+      max_seconds: 1300
+    duration:
+      distribution: lognormal
+      median_seconds: 2100
+      sigma: 0.25
+    observation_delay_seconds: 90
+  - role: node-unready-again
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-04
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 4200
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: pod-unknown-second
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: worker-agent-04-b
+    delay:
+      distribution: uniform
+      min_seconds: 1050
+      max_seconds: 1350
+    duration:
+      distribution: lognormal
+      median_seconds: 1800
+      sigma: 0.3
+    observation_delay_seconds: 120
+- incident_template_id: node-outage-flapping
+  reference_incident_id: incident-node-09
+  target:
+    cluster: synthetic-east
+    node: worker-05
+  start:
+    distribution: uniform
+    min_seconds: 7200
+    max_seconds: 7500
+  alerts:
+  - role: node-unready-first
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-05
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1100
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-05
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 960
+      max_seconds: 1260
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1800
+    observation_delay_seconds: 45
+  - role: pod-unknown-first
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: worker-agent-05-a
+    delay:
+      distribution: uniform
+      min_seconds: 1000
+      max_seconds: 1300
+    duration:
+      distribution: lognormal
+      median_seconds: 2100
+      sigma: 0.25
+    observation_delay_seconds: 90
+  - role: node-unready-again
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-05
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 4200
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: pod-unknown-second
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: worker-agent-05-b
+    delay:
+      distribution: uniform
+      min_seconds: 1050
+      max_seconds: 1350
+    duration:
+      distribution: lognormal
+      median_seconds: 1800
+      sigma: 0.3
+    observation_delay_seconds: 120
+- incident_template_id: node-outage-flapping
+  reference_incident_id: incident-node-10
+  target:
+    cluster: synthetic-west
+    node: worker-05
+  start:
+    distribution: uniform
+    min_seconds: 7200
+    max_seconds: 7500
+  alerts:
+  - role: node-unready-first
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-05
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1100
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-05
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 960
+      max_seconds: 1260
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1800
+    observation_delay_seconds: 45
+  - role: pod-unknown-first
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: worker-agent-05-a
+    delay:
+      distribution: uniform
+      min_seconds: 1000
+      max_seconds: 1300
+    duration:
+      distribution: lognormal
+      median_seconds: 2100
+      sigma: 0.25
+    observation_delay_seconds: 90
+  - role: node-unready-again
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-05
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 4200
+    duration:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1500
+    observation_delay_seconds: 15
+  - role: pod-unknown-second
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: worker-agent-05-b
+    delay:
+      distribution: uniform
+      min_seconds: 1050
+      max_seconds: 1350
+    duration:
+      distribution: lognormal
+      median_seconds: 1800
+      sigma: 0.3
+    observation_delay_seconds: 120
+- incident_template_id: bad-rollout
+  reference_incident_id: incident-rollout-01
+  target:
+    cluster: synthetic-east
+    namespace: default
+  start:
+    distribution: uniform
+    min_seconds: 600
+    max_seconds: 900
+  alerts:
+  - role: api-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: checkout-api-7c6d8f9b5d-a1b2c
+      container: api
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1200
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: api-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      deployment: checkout-api
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1500
+      max_seconds: 1800
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+  - role: worker-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: checkout-worker-7c6d8f9b5d-d3e4f
+      container: worker
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1020
+      max_seconds: 1320
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: worker-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      deployment: checkout-worker
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1620
+      max_seconds: 1920
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+  - role: web-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: checkout-web-7c6d8f9b5d-g5h6j
+      container: web
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1140
+      max_seconds: 1440
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: web-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      deployment: checkout-web
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1740
+      max_seconds: 2040
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+- incident_template_id: bad-rollout
+  reference_incident_id: incident-rollout-02
+  target:
+    cluster: synthetic-west
+    namespace: default
+  start:
+    distribution: uniform
+    min_seconds: 600
+    max_seconds: 900
+  alerts:
+  - role: api-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: checkout-api-7c6d8f9b5d-a1b2c
+      container: api
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1200
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: api-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      deployment: checkout-api
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1500
+      max_seconds: 1800
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+  - role: worker-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: checkout-worker-7c6d8f9b5d-d3e4f
+      container: worker
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1020
+      max_seconds: 1320
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: worker-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      deployment: checkout-worker
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1620
+      max_seconds: 1920
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+  - role: web-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: checkout-web-7c6d8f9b5d-g5h6j
+      container: web
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1140
+      max_seconds: 1440
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: web-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      deployment: checkout-web
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1740
+      max_seconds: 2040
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+- incident_template_id: bad-rollout
+  reference_incident_id: incident-rollout-03
+  target:
+    cluster: synthetic-east
+    namespace: default
+  start:
+    distribution: uniform
+    min_seconds: 3300
+    max_seconds: 3600
+  alerts:
+  - role: api-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: inventory-api-7c6d8f9b5d-a1b2c
+      container: api
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1200
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: api-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      deployment: inventory-api
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1500
+      max_seconds: 1800
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+  - role: worker-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: inventory-worker-7c6d8f9b5d-d3e4f
+      container: worker
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1020
+      max_seconds: 1320
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: worker-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      deployment: inventory-worker
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1620
+      max_seconds: 1920
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+  - role: web-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: inventory-web-7c6d8f9b5d-g5h6j
+      container: web
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1140
+      max_seconds: 1440
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: web-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      deployment: inventory-web
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1740
+      max_seconds: 2040
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+- incident_template_id: bad-rollout
+  reference_incident_id: incident-rollout-04
+  target:
+    cluster: synthetic-west
+    namespace: default
+  start:
+    distribution: uniform
+    min_seconds: 3300
+    max_seconds: 3600
+  alerts:
+  - role: api-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: inventory-api-7c6d8f9b5d-a1b2c
+      container: api
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1200
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: api-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      deployment: inventory-api
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1500
+      max_seconds: 1800
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+  - role: worker-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: inventory-worker-7c6d8f9b5d-d3e4f
+      container: worker
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1020
+      max_seconds: 1320
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: worker-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      deployment: inventory-worker
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1620
+      max_seconds: 1920
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+  - role: web-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: inventory-web-7c6d8f9b5d-g5h6j
+      container: web
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1140
+      max_seconds: 1440
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: web-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      deployment: inventory-web
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1740
+      max_seconds: 2040
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+- incident_template_id: bad-rollout
+  reference_incident_id: incident-rollout-05
+  target:
+    cluster: synthetic-east
+    namespace: default
+  start:
+    distribution: uniform
+    min_seconds: 6000
+    max_seconds: 6300
+  alerts:
+  - role: api-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: billing-api-7c6d8f9b5d-a1b2c
+      container: api
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1200
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: api-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      deployment: billing-api
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1500
+      max_seconds: 1800
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+  - role: worker-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: billing-worker-7c6d8f9b5d-d3e4f
+      container: worker
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1020
+      max_seconds: 1320
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: worker-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      deployment: billing-worker
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1620
+      max_seconds: 1920
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+  - role: web-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: billing-web-7c6d8f9b5d-g5h6j
+      container: web
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1140
+      max_seconds: 1440
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: web-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      deployment: billing-web
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1740
+      max_seconds: 2040
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+- incident_template_id: bad-rollout
+  reference_incident_id: incident-rollout-06
+  target:
+    cluster: synthetic-west
+    namespace: default
+  start:
+    distribution: uniform
+    min_seconds: 6000
+    max_seconds: 6300
+  alerts:
+  - role: api-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: billing-api-7c6d8f9b5d-a1b2c
+      container: api
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 900
+      max_seconds: 1200
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: api-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      deployment: billing-api
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1500
+      max_seconds: 1800
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+  - role: worker-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: billing-worker-7c6d8f9b5d-d3e4f
+      container: worker
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1020
+      max_seconds: 1320
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: worker-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      deployment: billing-worker
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1620
+      max_seconds: 1920
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+  - role: web-crashloop
+    alertname: KubePodCrashLooping
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: billing-web-7c6d8f9b5d-g5h6j
+      container: web
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1140
+      max_seconds: 1440
+    duration:
+      distribution: lognormal
+      median_seconds: 3000
+      sigma: 0.3
+    observation_delay_seconds: 30
+  - role: web-rollout-stuck
+    alertname: KubeDeploymentRolloutStuck
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      deployment: billing-web
+      job: kube-state-metrics
+    delay:
+      distribution: uniform
+      min_seconds: 1740
+      max_seconds: 2040
+    duration:
+      distribution: lognormal
+      median_seconds: 2400
+      sigma: 0.25
+    observation_delay_seconds: 60
+- incident_template_id: filesystem-exhaustion
+  reference_incident_id: incident-disk-01
+  target:
+    cluster: synthetic-east
+    instance: worker-08.east.example.invalid:9100
+  start:
+    distribution: uniform
+    min_seconds: 0
+    max_seconds: 300
+  alerts:
+  - role: mount-1-filling
+    alertname: NodeFilesystemSpaceFillingUp
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-08.east.example.invalid:9100
+      device: /dev/nvme0n1p4
+      mountpoint: /var
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3600
+    duration:
+      distribution: fixed
+      seconds: 4200
+    observation_delay_seconds: 30
+  - role: mount-1-low-space-warning
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-08.east.example.invalid:9100
+      device: /dev/nvme0n1p4
+      mountpoint: /var
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5400
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: mount-1-low-space-critical
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: critical
+      instance: worker-08.east.example.invalid:9100
+      device: /dev/nvme0n1p4
+      mountpoint: /var
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5700
+    duration:
+      distribution: fixed
+      seconds: 900
+    observation_delay_seconds: 60
+  - role: mount-2-filling
+    alertname: NodeFilesystemSpaceFillingUp
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-08.east.example.invalid:9100
+      device: /dev/nvme1n1
+      mountpoint: /var/lib/containers
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3720
+    duration:
+      distribution: fixed
+      seconds: 4200
+    observation_delay_seconds: 30
+  - role: mount-2-low-space-warning
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-08.east.example.invalid:9100
+      device: /dev/nvme1n1
+      mountpoint: /var/lib/containers
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5520
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: mount-2-low-space-critical
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: critical
+      instance: worker-08.east.example.invalid:9100
+      device: /dev/nvme1n1
+      mountpoint: /var/lib/containers
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5820
+    duration:
+      distribution: fixed
+      seconds: 900
+    observation_delay_seconds: 60
+- incident_template_id: filesystem-exhaustion
+  reference_incident_id: incident-disk-02
+  target:
+    cluster: synthetic-west
+    instance: worker-08.west.example.invalid:9100
+  start:
+    distribution: uniform
+    min_seconds: 0
+    max_seconds: 300
+  alerts:
+  - role: mount-1-filling
+    alertname: NodeFilesystemSpaceFillingUp
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: worker-08.west.example.invalid:9100
+      device: /dev/nvme0n1p4
+      mountpoint: /var
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3600
+    duration:
+      distribution: fixed
+      seconds: 4200
+    observation_delay_seconds: 30
+  - role: mount-1-low-space-warning
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: worker-08.west.example.invalid:9100
+      device: /dev/nvme0n1p4
+      mountpoint: /var
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5400
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: mount-1-low-space-critical
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: critical
+      instance: worker-08.west.example.invalid:9100
+      device: /dev/nvme0n1p4
+      mountpoint: /var
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5700
+    duration:
+      distribution: fixed
+      seconds: 900
+    observation_delay_seconds: 60
+  - role: mount-2-filling
+    alertname: NodeFilesystemSpaceFillingUp
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: worker-08.west.example.invalid:9100
+      device: /dev/nvme1n1
+      mountpoint: /var/lib/containers
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3720
+    duration:
+      distribution: fixed
+      seconds: 4200
+    observation_delay_seconds: 30
+  - role: mount-2-low-space-warning
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: worker-08.west.example.invalid:9100
+      device: /dev/nvme1n1
+      mountpoint: /var/lib/containers
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5520
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: mount-2-low-space-critical
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: critical
+      instance: worker-08.west.example.invalid:9100
+      device: /dev/nvme1n1
+      mountpoint: /var/lib/containers
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5820
+    duration:
+      distribution: fixed
+      seconds: 900
+    observation_delay_seconds: 60
+- incident_template_id: filesystem-exhaustion
+  reference_incident_id: incident-disk-03
+  target:
+    cluster: synthetic-east
+    instance: worker-09.east.example.invalid:9100
+  start:
+    distribution: uniform
+    min_seconds: 2400
+    max_seconds: 2700
+  alerts:
+  - role: mount-1-filling
+    alertname: NodeFilesystemSpaceFillingUp
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-09.east.example.invalid:9100
+      device: /dev/nvme0n1p4
+      mountpoint: /var
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3600
+    duration:
+      distribution: fixed
+      seconds: 4200
+    observation_delay_seconds: 30
+  - role: mount-1-low-space-warning
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-09.east.example.invalid:9100
+      device: /dev/nvme0n1p4
+      mountpoint: /var
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5400
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: mount-1-low-space-critical
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: critical
+      instance: worker-09.east.example.invalid:9100
+      device: /dev/nvme0n1p4
+      mountpoint: /var
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5700
+    duration:
+      distribution: fixed
+      seconds: 900
+    observation_delay_seconds: 60
+  - role: mount-2-filling
+    alertname: NodeFilesystemSpaceFillingUp
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-09.east.example.invalid:9100
+      device: /dev/nvme1n1
+      mountpoint: /var/lib/containers
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3720
+    duration:
+      distribution: fixed
+      seconds: 4200
+    observation_delay_seconds: 30
+  - role: mount-2-low-space-warning
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-09.east.example.invalid:9100
+      device: /dev/nvme1n1
+      mountpoint: /var/lib/containers
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5520
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: mount-2-low-space-critical
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: critical
+      instance: worker-09.east.example.invalid:9100
+      device: /dev/nvme1n1
+      mountpoint: /var/lib/containers
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5820
+    duration:
+      distribution: fixed
+      seconds: 900
+    observation_delay_seconds: 60
+- incident_template_id: filesystem-exhaustion
+  reference_incident_id: incident-disk-04
+  target:
+    cluster: synthetic-west
+    instance: worker-09.west.example.invalid:9100
+  start:
+    distribution: uniform
+    min_seconds: 2400
+    max_seconds: 2700
+  alerts:
+  - role: mount-1-filling
+    alertname: NodeFilesystemSpaceFillingUp
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: worker-09.west.example.invalid:9100
+      device: /dev/nvme0n1p4
+      mountpoint: /var
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3600
+    duration:
+      distribution: fixed
+      seconds: 4200
+    observation_delay_seconds: 30
+  - role: mount-1-low-space-warning
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: worker-09.west.example.invalid:9100
+      device: /dev/nvme0n1p4
+      mountpoint: /var
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5400
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: mount-1-low-space-critical
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: critical
+      instance: worker-09.west.example.invalid:9100
+      device: /dev/nvme0n1p4
+      mountpoint: /var
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5700
+    duration:
+      distribution: fixed
+      seconds: 900
+    observation_delay_seconds: 60
+  - role: mount-2-filling
+    alertname: NodeFilesystemSpaceFillingUp
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: worker-09.west.example.invalid:9100
+      device: /dev/nvme1n1
+      mountpoint: /var/lib/containers
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3720
+    duration:
+      distribution: fixed
+      seconds: 4200
+    observation_delay_seconds: 30
+  - role: mount-2-low-space-warning
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: worker-09.west.example.invalid:9100
+      device: /dev/nvme1n1
+      mountpoint: /var/lib/containers
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5520
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: mount-2-low-space-critical
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: critical
+      instance: worker-09.west.example.invalid:9100
+      device: /dev/nvme1n1
+      mountpoint: /var/lib/containers
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5820
+    duration:
+      distribution: fixed
+      seconds: 900
+    observation_delay_seconds: 60
+- incident_template_id: filesystem-exhaustion
+  reference_incident_id: incident-disk-05
+  target:
+    cluster: synthetic-east
+    instance: worker-10.east.example.invalid:9100
+  start:
+    distribution: uniform
+    min_seconds: 4800
+    max_seconds: 5100
+  alerts:
+  - role: mount-1-filling
+    alertname: NodeFilesystemSpaceFillingUp
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-10.east.example.invalid:9100
+      device: /dev/nvme0n1p4
+      mountpoint: /var
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3600
+    duration:
+      distribution: fixed
+      seconds: 4200
+    observation_delay_seconds: 30
+  - role: mount-1-low-space-warning
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-10.east.example.invalid:9100
+      device: /dev/nvme0n1p4
+      mountpoint: /var
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5400
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: mount-1-low-space-critical
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: critical
+      instance: worker-10.east.example.invalid:9100
+      device: /dev/nvme0n1p4
+      mountpoint: /var
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5700
+    duration:
+      distribution: fixed
+      seconds: 900
+    observation_delay_seconds: 60
+  - role: mount-2-filling
+    alertname: NodeFilesystemSpaceFillingUp
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-10.east.example.invalid:9100
+      device: /dev/nvme1n1
+      mountpoint: /var/lib/containers
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3720
+    duration:
+      distribution: fixed
+      seconds: 4200
+    observation_delay_seconds: 30
+  - role: mount-2-low-space-warning
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-10.east.example.invalid:9100
+      device: /dev/nvme1n1
+      mountpoint: /var/lib/containers
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5520
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: mount-2-low-space-critical
+    alertname: NodeFilesystemAlmostOutOfSpace
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: critical
+      instance: worker-10.east.example.invalid:9100
+      device: /dev/nvme1n1
+      mountpoint: /var/lib/containers
+      fstype: xfs
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 5820
+    duration:
+      distribution: fixed
+      seconds: 900
+    observation_delay_seconds: 60
+- incident_template_id: network-degradation
+  reference_incident_id: incident-network-01
+  target:
+    cluster: synthetic-east
+    node: worker-11
+  start:
+    distribution: uniform
+    min_seconds: 1800
+    max_seconds: 2100
+  alerts:
+  - role: receive-errors
+    alertname: NodeNetworkReceiveErrs
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-11.east.example.invalid:9100
+      device: ens192
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3600
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 30
+  - role: transmit-errors
+    alertname: NodeNetworkTransmitErrs
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-11.east.example.invalid:9100
+      device: ens192
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3660
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 30
+  - role: node-unready-first
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-11
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 15
+  - role: node-unready-again
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-11
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 4200
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 15
+  - role: node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-11
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 960
+    duration:
+      distribution: fixed
+      seconds: 1680
+    observation_delay_seconds: 45
+  - role: pod-unknown
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: edge-agent-11
+    delay:
+      distribution: fixed
+      seconds: 1000
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 180
+- incident_template_id: network-degradation
+  reference_incident_id: incident-network-02
+  target:
+    cluster: synthetic-west
+    node: worker-11
+  start:
+    distribution: uniform
+    min_seconds: 1800
+    max_seconds: 2100
+  alerts:
+  - role: receive-errors
+    alertname: NodeNetworkReceiveErrs
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: worker-11.west.example.invalid:9100
+      device: ens192
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3600
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 30
+  - role: transmit-errors
+    alertname: NodeNetworkTransmitErrs
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: worker-11.west.example.invalid:9100
+      device: ens192
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3660
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 30
+  - role: node-unready-first
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-11
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 15
+  - role: node-unready-again
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-11
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 4200
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 15
+  - role: node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-11
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 960
+    duration:
+      distribution: fixed
+      seconds: 1680
+    observation_delay_seconds: 45
+  - role: pod-unknown
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: edge-agent-11
+    delay:
+      distribution: fixed
+      seconds: 1000
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 180
+- incident_template_id: network-degradation
+  reference_incident_id: incident-network-03
+  target:
+    cluster: synthetic-east
+    node: worker-12
+  start:
+    distribution: uniform
+    min_seconds: 7200
+    max_seconds: 7500
+  alerts:
+  - role: receive-errors
+    alertname: NodeNetworkReceiveErrs
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-12.east.example.invalid:9100
+      device: ens192
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3600
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 30
+  - role: transmit-errors
+    alertname: NodeNetworkTransmitErrs
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: worker-12.east.example.invalid:9100
+      device: ens192
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3660
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 30
+  - role: node-unready-first
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-12
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 15
+  - role: node-unready-again
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-12
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 4200
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 15
+  - role: node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: worker-12
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 960
+    duration:
+      distribution: fixed
+      seconds: 1680
+    observation_delay_seconds: 45
+  - role: pod-unknown
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      pod: edge-agent-12
+    delay:
+      distribution: fixed
+      seconds: 1000
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 180
+- incident_template_id: network-degradation
+  reference_incident_id: incident-network-04
+  target:
+    cluster: synthetic-west
+    node: worker-12
+  start:
+    distribution: uniform
+    min_seconds: 7200
+    max_seconds: 7500
+  alerts:
+  - role: receive-errors
+    alertname: NodeNetworkReceiveErrs
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: worker-12.west.example.invalid:9100
+      device: ens192
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3600
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 30
+  - role: transmit-errors
+    alertname: NodeNetworkTransmitErrs
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: worker-12.west.example.invalid:9100
+      device: ens192
+      job: node-exporter
+    delay:
+      distribution: fixed
+      seconds: 3660
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 30
+  - role: node-unready-first
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-12
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 15
+  - role: node-unready-again
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-12
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 4200
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 15
+  - role: node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: worker-12
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 960
+    duration:
+      distribution: fixed
+      seconds: 1680
+    observation_delay_seconds: 45
+  - role: pod-unknown
+    alertname: KubePodNotReady
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      pod: edge-agent-12
+    delay:
+      distribution: fixed
+      seconds: 1000
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 180
+- incident_template_id: etcd-disk-latency
+  reference_incident_id: incident-etcd-disk-01
+  target:
+    cluster: synthetic-east
+  start:
+    distribution: uniform
+    min_seconds: 7200
+    max_seconds: 7800
+  alerts:
+  - role: member-1-fsync-warning
+    alertname: etcdHighFsyncDurations
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: control-plane-01.east.example.invalid:9979
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 600
+    duration:
+      distribution: fixed
+      seconds: 4200
+    observation_delay_seconds: 30
+  - role: member-1-fsync-critical
+    alertname: etcdHighFsyncDurations
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-east
+      severity: critical
+      instance: control-plane-01.east.example.invalid:9979
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 30
+  - role: member-1-commit-latency
+    alertname: etcdHighCommitDurations
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: control-plane-01.east.example.invalid:9979
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 660
+    duration:
+      distribution: fixed
+      seconds: 3600
+    observation_delay_seconds: 30
+  - role: member-2-fsync-warning
+    alertname: etcdHighFsyncDurations
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: control-plane-02.east.example.invalid:9979
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 720
+    duration:
+      distribution: fixed
+      seconds: 3600
+    observation_delay_seconds: 30
+  - role: member-2-commit-latency
+    alertname: etcdHighCommitDurations
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: control-plane-02.east.example.invalid:9979
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 780
+    duration:
+      distribution: fixed
+      seconds: 3000
+    observation_delay_seconds: 30
+  - role: failed-put-requests
+    alertname: etcdHighNumberOfFailedGRPCRequests
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: control-plane-01.east.example.invalid:9979
+      job: etcd
+      grpc_method: Put
+      grpc_service: etcdserverpb.KV
+    delay:
+      distribution: fixed
+      seconds: 960
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: failed-range-requests
+    alertname: etcdHighNumberOfFailedGRPCRequests
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      instance: control-plane-01.east.example.invalid:9979
+      job: etcd
+      grpc_method: Range
+      grpc_service: etcdserverpb.KV
+    delay:
+      distribution: fixed
+      seconds: 1080
+    duration:
+      distribution: fixed
+      seconds: 1500
+    observation_delay_seconds: 60
+  - role: transient-no-leader
+    alertname: etcdNoLeader
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-east
+      severity: critical
+      instance: control-plane-01.east.example.invalid:9979
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 1200
+    duration:
+      distribution: fixed
+      seconds: 180
+    observation_delay_seconds: 300
+- incident_template_id: etcd-disk-latency
+  reference_incident_id: incident-etcd-disk-02
+  target:
+    cluster: synthetic-west
+  start:
+    distribution: uniform
+    min_seconds: 7200
+    max_seconds: 7800
+  alerts:
+  - role: member-1-fsync-warning
+    alertname: etcdHighFsyncDurations
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: control-plane-01.west.example.invalid:9979
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 600
+    duration:
+      distribution: fixed
+      seconds: 4200
+    observation_delay_seconds: 30
+  - role: member-1-fsync-critical
+    alertname: etcdHighFsyncDurations
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-west
+      severity: critical
+      instance: control-plane-01.west.example.invalid:9979
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 30
+  - role: member-1-commit-latency
+    alertname: etcdHighCommitDurations
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: control-plane-01.west.example.invalid:9979
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 660
+    duration:
+      distribution: fixed
+      seconds: 3600
+    observation_delay_seconds: 30
+  - role: member-2-fsync-warning
+    alertname: etcdHighFsyncDurations
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: control-plane-02.west.example.invalid:9979
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 720
+    duration:
+      distribution: fixed
+      seconds: 3600
+    observation_delay_seconds: 30
+  - role: member-2-commit-latency
+    alertname: etcdHighCommitDurations
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: control-plane-02.west.example.invalid:9979
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 780
+    duration:
+      distribution: fixed
+      seconds: 3000
+    observation_delay_seconds: 30
+  - role: failed-put-requests
+    alertname: etcdHighNumberOfFailedGRPCRequests
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: control-plane-01.west.example.invalid:9979
+      job: etcd
+      grpc_method: Put
+      grpc_service: etcdserverpb.KV
+    delay:
+      distribution: fixed
+      seconds: 960
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: failed-range-requests
+    alertname: etcdHighNumberOfFailedGRPCRequests
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      instance: control-plane-01.west.example.invalid:9979
+      job: etcd
+      grpc_method: Range
+      grpc_service: etcdserverpb.KV
+    delay:
+      distribution: fixed
+      seconds: 1080
+    duration:
+      distribution: fixed
+      seconds: 1500
+    observation_delay_seconds: 60
+  - role: transient-no-leader
+    alertname: etcdNoLeader
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-west
+      severity: critical
+      instance: control-plane-01.west.example.invalid:9979
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 1200
+    duration:
+      distribution: fixed
+      seconds: 180
+    observation_delay_seconds: 300
+- incident_template_id: etcd-quorum-loss
+  reference_incident_id: incident-etcd-quorum-01
+  target:
+    cluster: synthetic-east
+  start:
+    distribution: uniform
+    min_seconds: 18000
+    max_seconds: 18600
+  alerts:
+  - role: survivor-no-leader
+    alertname: etcdNoLeader
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-east
+      severity: critical
+      instance: control-plane-03.east.example.invalid:9979
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 60
+    duration:
+      distribution: fixed
+      seconds: 2400
+    observation_delay_seconds: 15
+  - role: quorum-lost
+    alertname: etcdInsufficientMembers
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-east
+      severity: critical
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 180
+    duration:
+      distribution: fixed
+      seconds: 2100
+    observation_delay_seconds: 30
+  - role: members-down
+    alertname: etcdMembersDown
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-east
+      severity: critical
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 1200
+    duration:
+      distribution: fixed
+      seconds: 1500
+    observation_delay_seconds: 60
+  - role: member-1-node-unready
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: control-plane-01
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 30
+  - role: member-1-node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: control-plane-01
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 960
+    duration:
+      distribution: fixed
+      seconds: 1680
+    observation_delay_seconds: 45
+  - role: member-2-node-unready
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: control-plane-02
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 30
+  - role: member-2-node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      node: control-plane-02
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 960
+    duration:
+      distribution: fixed
+      seconds: 1680
+    observation_delay_seconds: 45
+  - role: survivor-failed-put
+    alertname: etcdHighNumberOfFailedGRPCRequests
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-east
+      severity: critical
+      instance: control-plane-03.east.example.invalid:9979
+      job: etcd
+      grpc_method: Put
+      grpc_service: etcdserverpb.KV
+    delay:
+      distribution: fixed
+      seconds: 600
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+- incident_template_id: etcd-quorum-loss
+  reference_incident_id: incident-etcd-quorum-02
+  target:
+    cluster: synthetic-west
+  start:
+    distribution: uniform
+    min_seconds: 18000
+    max_seconds: 18600
+  alerts:
+  - role: survivor-no-leader
+    alertname: etcdNoLeader
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-west
+      severity: critical
+      instance: control-plane-03.west.example.invalid:9979
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 60
+    duration:
+      distribution: fixed
+      seconds: 2400
+    observation_delay_seconds: 15
+  - role: quorum-lost
+    alertname: etcdInsufficientMembers
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-west
+      severity: critical
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 180
+    duration:
+      distribution: fixed
+      seconds: 2100
+    observation_delay_seconds: 30
+  - role: members-down
+    alertname: etcdMembersDown
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-west
+      severity: critical
+      job: etcd
+    delay:
+      distribution: fixed
+      seconds: 1200
+    duration:
+      distribution: fixed
+      seconds: 1500
+    observation_delay_seconds: 60
+  - role: member-1-node-unready
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: control-plane-01
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 30
+  - role: member-1-node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: control-plane-01
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 960
+    duration:
+      distribution: fixed
+      seconds: 1680
+    observation_delay_seconds: 45
+  - role: member-2-node-unready
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: control-plane-02
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 30
+  - role: member-2-node-unreachable
+    alertname: KubeNodeUnreachable
+    namespace: openshift-monitoring
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      node: control-plane-02
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 960
+    duration:
+      distribution: fixed
+      seconds: 1680
+    observation_delay_seconds: 45
+  - role: survivor-failed-put
+    alertname: etcdHighNumberOfFailedGRPCRequests
+    namespace: openshift-etcd
+    labels:
+      cluster: synthetic-west
+      severity: critical
+      instance: control-plane-03.west.example.invalid:9979
+      job: etcd
+      grpc_method: Put
+      grpc_service: etcdserverpb.KV
+    delay:
+      distribution: fixed
+      seconds: 600
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+- incident_template_id: capacity-and-quota-pressure
+  reference_incident_id: incident-capacity-01
+  target:
+    cluster: synthetic-east
+  start:
+    distribution: uniform
+    min_seconds: 1200
+    max_seconds: 1500
+  alerts:
+  - role: cpu-request-overcommit
+    alertname: KubeCPUOvercommit
+    namespace: kube-system
+    labels:
+      cluster: synthetic-east
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 600
+    duration:
+      distribution: fixed
+      seconds: 3000
+    observation_delay_seconds: 30
+  - role: memory-request-overcommit
+    alertname: KubeMemoryOvercommit
+    namespace: kube-system
+    labels:
+      cluster: synthetic-east
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 660
+    duration:
+      distribution: fixed
+      seconds: 3000
+    observation_delay_seconds: 30
+  - role: quota-resource-1
+    alertname: KubeQuotaAlmostFull
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: info
+      resourcequota: compute-budget
+      resource: requests.cpu
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: quota-resource-2
+    alertname: KubeQuotaAlmostFull
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: info
+      resourcequota: compute-budget
+      resource: requests.memory
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 960
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: quota-resource-3
+    alertname: KubeQuotaAlmostFull
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: info
+      resourcequota: compute-budget
+      resource: pods
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 1020
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+- incident_template_id: capacity-and-quota-pressure
+  reference_incident_id: incident-capacity-02
+  target:
+    cluster: synthetic-west
+  start:
+    distribution: uniform
+    min_seconds: 1200
+    max_seconds: 1500
+  alerts:
+  - role: cpu-request-overcommit
+    alertname: KubeCPUOvercommit
+    namespace: kube-system
+    labels:
+      cluster: synthetic-west
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 600
+    duration:
+      distribution: fixed
+      seconds: 3000
+    observation_delay_seconds: 30
+  - role: memory-request-overcommit
+    alertname: KubeMemoryOvercommit
+    namespace: kube-system
+    labels:
+      cluster: synthetic-west
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 660
+    duration:
+      distribution: fixed
+      seconds: 3000
+    observation_delay_seconds: 30
+  - role: quota-resource-1
+    alertname: KubeQuotaAlmostFull
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: info
+      resourcequota: compute-budget
+      resource: requests.cpu
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: quota-resource-2
+    alertname: KubeQuotaAlmostFull
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: info
+      resourcequota: compute-budget
+      resource: requests.memory
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 960
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: quota-resource-3
+    alertname: KubeQuotaAlmostFull
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: info
+      resourcequota: compute-budget
+      resource: pods
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 1020
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+- incident_template_id: capacity-and-quota-pressure
+  reference_incident_id: incident-capacity-03
+  target:
+    cluster: synthetic-east
+  start:
+    distribution: uniform
+    min_seconds: 21600
+    max_seconds: 21900
+  alerts:
+  - role: cpu-request-overcommit
+    alertname: KubeCPUOvercommit
+    namespace: kube-system
+    labels:
+      cluster: synthetic-east
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 600
+    duration:
+      distribution: fixed
+      seconds: 3000
+    observation_delay_seconds: 30
+  - role: memory-request-overcommit
+    alertname: KubeMemoryOvercommit
+    namespace: kube-system
+    labels:
+      cluster: synthetic-east
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 660
+    duration:
+      distribution: fixed
+      seconds: 3000
+    observation_delay_seconds: 30
+  - role: quota-resource-1
+    alertname: KubeQuotaAlmostFull
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: info
+      resourcequota: compute-budget
+      resource: requests.cpu
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: quota-resource-2
+    alertname: KubeQuotaAlmostFull
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: info
+      resourcequota: compute-budget
+      resource: requests.memory
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 960
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: quota-resource-3
+    alertname: KubeQuotaAlmostFull
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: info
+      resourcequota: compute-budget
+      resource: pods
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 1020
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+- incident_template_id: capacity-and-quota-pressure
+  reference_incident_id: incident-capacity-04
+  target:
+    cluster: synthetic-west
+  start:
+    distribution: uniform
+    min_seconds: 21600
+    max_seconds: 21900
+  alerts:
+  - role: cpu-request-overcommit
+    alertname: KubeCPUOvercommit
+    namespace: kube-system
+    labels:
+      cluster: synthetic-west
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 600
+    duration:
+      distribution: fixed
+      seconds: 3000
+    observation_delay_seconds: 30
+  - role: memory-request-overcommit
+    alertname: KubeMemoryOvercommit
+    namespace: kube-system
+    labels:
+      cluster: synthetic-west
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 660
+    duration:
+      distribution: fixed
+      seconds: 3000
+    observation_delay_seconds: 30
+  - role: quota-resource-1
+    alertname: KubeQuotaAlmostFull
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: info
+      resourcequota: compute-budget
+      resource: requests.cpu
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: quota-resource-2
+    alertname: KubeQuotaAlmostFull
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: info
+      resourcequota: compute-budget
+      resource: requests.memory
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 960
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+  - role: quota-resource-3
+    alertname: KubeQuotaAlmostFull
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: info
+      resourcequota: compute-budget
+      resource: pods
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 1020
+    duration:
+      distribution: fixed
+      seconds: 1800
+    observation_delay_seconds: 60
+- incident_template_id: isolated-job-failure
+  reference_incident_id: incident-job-01
+  target:
+    cluster: synthetic-east
+    namespace: default
+    job_name: nightly-backup
+  start:
+    distribution: uniform
+    min_seconds: 300
+    max_seconds: 600
+  alerts:
+  - role: failed-job
+    alertname: KubeJobFailed
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      job_name: nightly-backup
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: uniform
+      min_seconds: 600
+      max_seconds: 1800
+    observation_delay_seconds: 2400
+- incident_template_id: isolated-job-failure
+  reference_incident_id: incident-job-02
+  target:
+    cluster: synthetic-west
+    namespace: default
+    job_name: nightly-backup
+  start:
+    distribution: uniform
+    min_seconds: 300
+    max_seconds: 600
+  alerts:
+  - role: failed-job
+    alertname: KubeJobFailed
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      job_name: nightly-backup
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: uniform
+      min_seconds: 600
+      max_seconds: 1800
+    observation_delay_seconds: 60
+- incident_template_id: isolated-job-failure
+  reference_incident_id: incident-job-03
+  target:
+    cluster: synthetic-east
+    namespace: default
+    job_name: cache-cleanup
+  start:
+    distribution: uniform
+    min_seconds: 2700
+    max_seconds: 3000
+  alerts:
+  - role: failed-job
+    alertname: KubeJobFailed
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      job_name: cache-cleanup
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: uniform
+      min_seconds: 600
+      max_seconds: 1800
+    observation_delay_seconds: 60
+- incident_template_id: isolated-job-failure
+  reference_incident_id: incident-job-04
+  target:
+    cluster: synthetic-west
+    namespace: default
+    job_name: cache-cleanup
+  start:
+    distribution: uniform
+    min_seconds: 2700
+    max_seconds: 3000
+  alerts:
+  - role: failed-job
+    alertname: KubeJobFailed
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      job_name: cache-cleanup
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: uniform
+      min_seconds: 600
+      max_seconds: 1800
+    observation_delay_seconds: 60
+- incident_template_id: isolated-job-failure
+  reference_incident_id: incident-job-05
+  target:
+    cluster: synthetic-east
+    namespace: default
+    job_name: search-reindex
+  start:
+    distribution: uniform
+    min_seconds: 5100
+    max_seconds: 5400
+  alerts:
+  - role: failed-job
+    alertname: KubeJobFailed
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      job_name: search-reindex
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: uniform
+      min_seconds: 600
+      max_seconds: 1800
+    observation_delay_seconds: 60
+- incident_template_id: isolated-job-failure
+  reference_incident_id: incident-job-06
+  target:
+    cluster: synthetic-west
+    namespace: default
+    job_name: search-reindex
+  start:
+    distribution: uniform
+    min_seconds: 5100
+    max_seconds: 5400
+  alerts:
+  - role: failed-job
+    alertname: KubeJobFailed
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      job_name: search-reindex
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: uniform
+      min_seconds: 600
+      max_seconds: 1800
+    observation_delay_seconds: 60
+- incident_template_id: isolated-job-failure
+  reference_incident_id: incident-job-07
+  target:
+    cluster: synthetic-east
+    namespace: default
+    job_name: daily-report
+  start:
+    distribution: uniform
+    min_seconds: 7500
+    max_seconds: 7800
+  alerts:
+  - role: failed-job
+    alertname: KubeJobFailed
+    namespace: default
+    labels:
+      cluster: synthetic-east
+      severity: warning
+      job_name: daily-report
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: uniform
+      min_seconds: 600
+      max_seconds: 1800
+    observation_delay_seconds: 60
+- incident_template_id: isolated-job-failure
+  reference_incident_id: incident-job-08
+  target:
+    cluster: synthetic-west
+    namespace: default
+    job_name: daily-report
+  start:
+    distribution: uniform
+    min_seconds: 7500
+    max_seconds: 7800
+  alerts:
+  - role: failed-job
+    alertname: KubeJobFailed
+    namespace: default
+    labels:
+      cluster: synthetic-west
+      severity: warning
+      job_name: daily-report
+      job: kube-state-metrics
+    delay:
+      distribution: fixed
+      seconds: 900
+    duration:
+      distribution: uniform
+      min_seconds: 600
+      max_seconds: 1800
+    observation_delay_seconds: 60

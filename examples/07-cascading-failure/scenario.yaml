@@ -1,0 +1,90 @@
+# Cross-component membership is authored causal truth, not inferred from topology or matching node labels.
+# Synthetic fixture: no production-derived data or timing statistics.
+scenario_id: 07-cascading-failure
+version: '0.1'
+incidents:
+- incident_template_id: network-cascade
+  reference_incident_id: incident-cascade
+  target:
+    namespace: payments
+  start:
+    distribution: fixed
+    seconds: 100
+  alerts:
+  - role: network-root
+    alertname: SyntheticNetworkLoss
+    namespace: payments
+    labels:
+      severity: warning
+      node: node-edge
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 160
+    observation_delay_seconds: 0
+  - role: database
+    alertname: SyntheticDatabaseUnavailable
+    namespace: payments
+    labels:
+      severity: warning
+      pod: db-1
+      node: node-db
+    delay:
+      distribution: fixed
+      seconds: 20
+    duration:
+      distribution: fixed
+      seconds: 100
+    observation_delay_seconds: 0
+  - role: api
+    alertname: SyntheticHighErrorRate
+    namespace: payments
+    labels:
+      severity: warning
+      service: api
+      node: node-api
+    delay:
+      distribution: fixed
+      seconds: 40
+    duration:
+      distribution: fixed
+      seconds: 80
+    observation_delay_seconds: 0
+  - role: replacement-pod
+    alertname: SyntheticDatabaseUnavailable
+    namespace: payments
+    labels:
+      severity: warning
+      pod: db-2
+      node: node-db
+    delay:
+      distribution: fixed
+      seconds: 65
+    duration:
+      distribution: fixed
+      seconds: 45
+    observation_delay_seconds: 0
+- incident_template_id: unrelated-api-failure
+  reference_incident_id: incident-other-api
+  target:
+    namespace: payments
+  start:
+    distribution: fixed
+    seconds: 140
+  alerts:
+  - role: api
+    alertname: SyntheticHighErrorRate
+    namespace: payments
+    labels:
+      severity: warning
+      service: reports
+      node: node-reports
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 50
+    observation_delay_seconds: 0

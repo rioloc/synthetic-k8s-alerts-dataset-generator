@@ -1,0 +1,28 @@
+# Python bytecode and local virtual environment
+__pycache__/
+*.py[cod]
+/.venv/
+
+# Local checkers
+.ruff_cache/
+.mypy_cache/
+
+# Python packaging artifacts
+/build/
+/dist/
+*.egg-info/
+
+# Generated datasets at the project root (documented output paths)
+/dataset/
+/dataset-*/
+/fixed-dataset/
+/overlap-dataset/
+/variation-other-seed/
+
+# Generated timeline images at the project root
+/timeline.png
+/timeline-*.png
+
+# Incomplete generator/visualizer staging artifacts
+.generator-*/
+.visualize-*.png

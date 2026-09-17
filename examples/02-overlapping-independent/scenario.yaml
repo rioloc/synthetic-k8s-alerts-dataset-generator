@@ -1,0 +1,73 @@
+# Identical namespace and alert names are not sufficient evidence for one incident.
+# Synthetic fixture: no production-derived data or timing statistics.
+scenario_id: 02-overlapping-independent
+version: '0.1'
+incidents:
+- incident_template_id: node-failure
+  reference_incident_id: incident-node-a
+  target:
+    node: node-a
+  start:
+    distribution: fixed
+    seconds: 100
+  alerts:
+  - role: primary
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      node: node-a
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 180
+    observation_delay_seconds: 0
+  - role: target-down
+    alertname: TargetDown
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      instance: node-a
+    delay:
+      distribution: fixed
+      seconds: 20
+    duration:
+      distribution: fixed
+      seconds: 120
+    observation_delay_seconds: 0
+- incident_template_id: node-failure
+  reference_incident_id: incident-node-b
+  target:
+    node: node-b
+  start:
+    distribution: fixed
+    seconds: 110
+  alerts:
+  - role: primary
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      node: node-b
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 150
+    observation_delay_seconds: 0
+  - role: target-down
+    alertname: TargetDown
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      instance: node-b
+    delay:
+      distribution: fixed
+      seconds: 25
+    duration:
+      distribution: fixed
+      seconds: 90
+    observation_delay_seconds: 0

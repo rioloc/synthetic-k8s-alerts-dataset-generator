@@ -1,0 +1,60 @@
+# Event order and observation order differ; the first episode is observed at 180, after ending at 120.
+# Synthetic fixture: no production-derived data or timing statistics.
+scenario_id: 06-delayed-observation
+version: '0.1'
+incidents:
+- incident_template_id: node-failure
+  reference_incident_id: incident-node
+  target:
+    node: node-a
+  start:
+    distribution: fixed
+    seconds: 100
+  alerts:
+  - role: slow-observation
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      node: node-a
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 20
+    observation_delay_seconds: 80
+  - role: fast-observation
+    alertname: TargetDown
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      instance: node-a
+    delay:
+      distribution: fixed
+      seconds: 15
+    duration:
+      distribution: fixed
+      seconds: 40
+    observation_delay_seconds: 0
+- incident_template_id: independent-network
+  reference_incident_id: incident-network
+  target:
+    node: node-b
+  start:
+    distribution: fixed
+    seconds: 130
+  alerts:
+  - role: network
+    alertname: SyntheticNetworkLoss
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      node: node-b
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 30
+    observation_delay_seconds: 5

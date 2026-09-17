@@ -1,0 +1,90 @@
+# Watchdog is intentionally an independent singleton here, not a universal claim about background alerts.
+# Synthetic fixture: no production-derived data or timing statistics.
+scenario_id: 05-singletons-and-background
+version: '0.1'
+incidents:
+- incident_template_id: background-watchdog
+  reference_incident_id: incident-watchdog
+  start:
+    distribution: fixed
+    seconds: 0
+  alerts:
+  - role: watchdog
+    alertname: Watchdog
+    namespace: openshift-monitoring
+    labels:
+      severity: none
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 600
+    observation_delay_seconds: 0
+- incident_template_id: deployment-failure
+  reference_incident_id: incident-deployment
+  target:
+    namespace: payments
+  start:
+    distribution: fixed
+    seconds: 100
+  alerts:
+  - role: replicas
+    alertname: KubeDeploymentReplicasMismatch
+    namespace: payments
+    labels:
+      severity: warning
+      deployment: api
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 150
+    observation_delay_seconds: 0
+  - role: pod
+    alertname: KubePodCrashLooping
+    namespace: payments
+    labels:
+      severity: warning
+      deployment: api
+      pod: api-1
+    delay:
+      distribution: fixed
+      seconds: 15
+    duration:
+      distribution: fixed
+      seconds: 90
+    observation_delay_seconds: 0
+  - role: availability
+    alertname: SyntheticServiceUnavailable
+    namespace: payments
+    labels:
+      severity: warning
+      service: api
+    delay:
+      distribution: fixed
+      seconds: 30
+    duration:
+      distribution: fixed
+      seconds: 100
+    observation_delay_seconds: 0
+- incident_template_id: isolated-oom
+  reference_incident_id: incident-oom
+  start:
+    distribution: fixed
+    seconds: 220
+  alerts:
+  - role: oom
+    alertname: SyntheticContainerOOM
+    namespace: batch
+    labels:
+      severity: warning
+      pod: batch-1
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 20
+    observation_delay_seconds: 0

@@ -1,0 +1,74 @@
+# Two disjoint firing episodes and an explicitly synthetic recovery signal share one oracle incident.
+# Synthetic fixture: no production-derived data or timing statistics.
+scenario_id: 03-flapping-and-recovery
+version: '0.1'
+incidents:
+- incident_template_id: flapping-node
+  reference_incident_id: incident-flapping
+  target:
+    node: node-a
+  start:
+    distribution: fixed
+    seconds: 100
+  alerts:
+  - role: firing-first
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      node: node-a
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 30
+    observation_delay_seconds: 0
+  - role: firing-second
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      node: node-a
+    delay:
+      distribution: fixed
+      seconds: 70
+    duration:
+      distribution: fixed
+      seconds: 25
+    observation_delay_seconds: 0
+  - role: recovery
+    alertname: SyntheticNodeRecovered
+    namespace: openshift-monitoring
+    labels:
+      severity: info
+      node: node-a
+    delay:
+      distribution: fixed
+      seconds: 100
+    duration:
+      distribution: fixed
+      seconds: 10
+    observation_delay_seconds: 0
+- incident_template_id: pod-restart
+  reference_incident_id: incident-unrelated
+  target:
+    node: node-b
+  start:
+    distribution: fixed
+    seconds: 175
+  alerts:
+  - role: restart
+    alertname: KubePodCrashLooping
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      pod: worker-b
+      node: node-b
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 40
+    observation_delay_seconds: 0

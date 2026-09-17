@@ -1,0 +1,105 @@
+# Uncalibrated stochastic counterpart to node-overlap fixtures; all lognormal profiles specify sigma.
+# Synthetic fixture: no production-derived data or timing statistics.
+scenario_id: 08-seeded-variation
+version: '0.1'
+incidents:
+- incident_template_id: node-failure
+  reference_incident_id: incident-node-a
+  target:
+    node: node-a
+  start:
+    distribution: uniform
+    min_seconds: 100
+    max_seconds: 200
+  alerts:
+  - role: primary
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      node: node-a
+    delay:
+      distribution: lognormal
+      median_seconds: 30
+      sigma: 0.4
+    duration:
+      distribution: lognormal
+      median_seconds: 1200
+      sigma: 0.5
+    observation_delay_seconds: 14
+  - role: target-down
+    alertname: TargetDown
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      instance: node-a
+    delay:
+      distribution: lognormal
+      median_seconds: 60
+      sigma: 0.4
+    duration:
+      distribution: lognormal
+      median_seconds: 900
+      sigma: 0.5
+    observation_delay_seconds: 5
+- incident_template_id: node-failure
+  reference_incident_id: incident-node-b
+  target:
+    node: node-b
+  start:
+    distribution: uniform
+    min_seconds: 150
+    max_seconds: 250
+  alerts:
+  - role: primary
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      node: node-b
+    delay:
+      distribution: uniform
+      min_seconds: 10
+      max_seconds: 40
+    duration:
+      distribution: lognormal
+      median_seconds: 800
+      sigma: 0.3
+    observation_delay_seconds: 20
+  - role: target-down
+    alertname: TargetDown
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      instance: node-b
+    delay:
+      distribution: lognormal
+      median_seconds: 45
+      sigma: 0.5
+    duration:
+      distribution: uniform
+      min_seconds: 400
+      max_seconds: 700
+    observation_delay_seconds: 0
+- incident_template_id: isolated-restart
+  reference_incident_id: incident-restart
+  target:
+    node: node-c
+  start:
+    distribution: fixed
+    seconds: 180
+  alerts:
+  - role: restart
+    alertname: KubePodCrashLooping
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      pod: worker-c
+      node: node-c
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 25
+    observation_delay_seconds: 3

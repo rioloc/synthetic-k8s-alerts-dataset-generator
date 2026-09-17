@@ -1,0 +1,94 @@
+# The same template is instantiated three times; two separate occurrences target node-a.
+# Synthetic fixture: no production-derived data or timing statistics.
+scenario_id: 04-repeated-template
+version: '0.1'
+incidents:
+- incident_template_id: node-failure
+  reference_incident_id: incident-a-first
+  target:
+    node: node-a
+  start:
+    distribution: fixed
+    seconds: 100
+  alerts:
+  - role: primary
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      node: node-a
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 50
+    observation_delay_seconds: 0
+  - role: target-down
+    alertname: TargetDown
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      instance: node-a
+    delay:
+      distribution: fixed
+      seconds: 10
+    duration:
+      distribution: fixed
+      seconds: 30
+    observation_delay_seconds: 0
+- incident_template_id: node-failure
+  reference_incident_id: incident-a-second
+  target:
+    node: node-a
+  start:
+    distribution: fixed
+    seconds: 300
+  alerts:
+  - role: primary
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      node: node-a
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 60
+    observation_delay_seconds: 0
+  - role: target-down
+    alertname: TargetDown
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      instance: node-a
+    delay:
+      distribution: fixed
+      seconds: 15
+    duration:
+      distribution: fixed
+      seconds: 25
+    observation_delay_seconds: 0
+- incident_template_id: node-failure
+  reference_incident_id: incident-b
+  target:
+    node: node-b
+  start:
+    distribution: fixed
+    seconds: 320
+  alerts:
+  - role: primary
+    alertname: KubeNodeNotReady
+    namespace: openshift-monitoring
+    labels:
+      severity: warning
+      node: node-b
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 30
+    observation_delay_seconds: 0
