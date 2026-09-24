@@ -2,7 +2,7 @@
 
 These are authored synthetic oracle scenarios, not collected alerts and not assertions about how any particular grouping algorithm should behave. Expected partitions describe the evaluator's truth for these fixtures. Names beginning with `Synthetic` are illustrative signals, not claims that those alert rules exist in OpenShift.
 
-Examples 01–07 use fixed integer timing so their relationships can be checked by hand. Example 08 adds all three supported distributions; example 09 scales up to 200 episodes using a versioned OpenShift alert-rule baseline. The seed is required for every example; `424242` is the documented baseline.
+Examples 01–07 use fixed integer timing so their relationships can be checked by hand. Example 08 adds all three supported distributions; example 09 scales up to 200 episodes using a versioned OpenShift alert-rule baseline. Examples 10–12 use metric names from representative RCAEval RE1 cases without importing their values or timestamps. The seed is required for every example; `424242` is the documented baseline.
 
 ## Generate and inspect
 
@@ -43,6 +43,9 @@ Give only each dataset's `episodes.yaml` to an algorithm. The evaluator loads `a
 | [07-cascading-failure](07-cascading-failure/scenario.yaml) | 5 / 2 | 4 + 1 | A cross-component cascade coexists with a similar but unrelated symptom. |
 | [08-seeded-variation](08-seeded-variation/scenario.yaml) | 5 / 3 | 2 + 2 + 1 | Reproducible variation without destroying the shared incident origin. |
 | [09-openshift-alert-storm](09-openshift-alert-storm/scenario.yaml) | 200 / 41 | 8×1 + 14×5 + 15×6 + 4×8 | Concurrent fault families, cross-component symptoms, recurrence, and a large reference timeline. |
+| [10-rcaeval-re1-online-boutique](10-rcaeval-re1-online-boutique/scenario.yaml) | 19 / 5 | 3 + 4 + 4 + 4 + 4 | Online Boutique metric families represented as authored alert signals. |
+| [11-rcaeval-re1-sock-shop](11-rcaeval-re1-sock-shop/scenario.yaml) | 19 / 5 | 3 + 4 + 4 + 4 + 4 | Sock Shop metric families and downstream error signals. |
+| [12-rcaeval-re1-train-ticket](12-rcaeval-re1-train-ticket/scenario.yaml) | 19 / 5 | 3 + 4 + 4 + 4 + 4 | Train Ticket metric families and cross-service symptoms. |
 
 ### 01 — Delayed symptoms: a hand-checkable baseline
 
@@ -224,6 +227,18 @@ Causal assignments, fault counts, wave spacing, resource relationships, recovery
 Regression checks cover exact episode/incident/template counts, partition sizes, supported alert names, minimum pending-period delays, label scope, different seeds, same-seed byte equivalence of all four artifacts, overlapping independent incidents with matching cluster/namespace/alert name, flapping gaps, late observations, and PNG decoding without modifying dataset files.
 
 The full PNG has 200 rows and requires zooming. It is an evaluator/debugging artifact containing reference assignments, not input to a grouping algorithm. More than 200 episodes would require a different visualization strategy; this example intentionally does not relax the renderer limit. Correct synthetic reference labels and documented rule names still do not establish production-realistic timing or incident prevalence.
+
+### 10–12 — RCAEval RE1 metric-family scenarios
+
+These three scenarios use only the names and families of metrics defined by representative RE1 cases:
+
+- `10`: Online Boutique, `adservice_{cpu,mem,disk,delay,loss}`.
+- `11`: Sock Shop, `carts_{cpu,mem,disk,delay,loss}`.
+- `12`: Train Ticket, `ts-auth-service_{cpu,mem,disk,delay,loss}`.
+
+Each scenario contains five independently authored reference incidents and 19 episodes. The `metric` label keeps the source column name; `metric_family` is the small mapping used by the fixture. `SyntheticMetric*` alert names are illustrative and do not claim that RCAEval defines Prometheus alert rules.
+
+RE1 supplies metric time series and injection timestamps, not alert intervals or grouping annotations. Therefore these examples do not read `data.csv`, threshold values, or `inject_time.txt`; all relative starts, delays, durations, and oracle memberships are authored. `disk` is a fault family in the source layout without a direct `_disk` metric, so its episodes use the latency/workload/error families available in the corresponding case. See each example README for the exact source columns and attribution.
 
 ## Coverage boundaries
 

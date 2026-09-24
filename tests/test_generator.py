@@ -210,6 +210,9 @@ class GeneratorTests(unittest.TestCase):
             7: [1, 4],
             8: [1, 2, 2],
             9: [1] * 8 + [5] * 14 + [6] * 15 + [8] * 4,
+            10: [3, 4, 4, 4, 4],
+            11: [3, 4, 4, 4, 4],
+            12: [3, 4, 4, 4, 4],
         }
         for number, sizes in expected.items():
             with self.subTest(number=number):
@@ -227,6 +230,42 @@ class GeneratorTests(unittest.TestCase):
                             "overlapping_incidents"
                         ]
                     )
+
+    def test_rcaeval_examples_use_metric_defined_signals(self):
+        applications = {
+            10: "online-boutique",
+            11: "sock-shop",
+            12: "train-ticket",
+        }
+        metric_families = {"cpu", "memory", "load", "workload", "latency", "error"}
+        for number, application in applications.items():
+            with self.subTest(number=number):
+                value = scenario(number)
+                self.assertEqual(len(value["incidents"]), 5)
+                self.assertEqual(
+                    sorted(len(incident["alerts"]) for incident in value["incidents"]),
+                    [3, 4, 4, 4, 4],
+                )
+                self.assertEqual(
+                    {
+                        incident["target"]["application"]
+                        for incident in value["incidents"]
+                    },
+                    {application},
+                )
+                alerts = [
+                    alert
+                    for incident in value["incidents"]
+                    for alert in incident["alerts"]
+                ]
+                self.assertEqual(len(alerts), 19)
+                self.assertTrue(
+                    all(
+                        alert["alertname"].startswith("SyntheticMetric")
+                        and alert["labels"]["metric_family"] in metric_families
+                        for alert in alerts
+                    )
+                )
 
     def test_alert_storm_rule_baseline_and_causal_structure(self):
         value = scenario(9)

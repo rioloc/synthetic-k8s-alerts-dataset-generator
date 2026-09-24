@@ -1,0 +1,350 @@
+# Signal names follow the metric columns in the corresponding RCAEval RE1-OB cases.
+# Values, thresholds, and source timestamps are not imported; episode timing is authored.
+# See the example README for the metric-family mapping and source attribution.
+scenario_id: 10-rcaeval-re1-online-boutique
+version: '0.1'
+incidents:
+- incident_template_id: rcaeval-cpu-pressure
+  reference_incident_id: incident-adservice-cpu
+  target:
+    application: online-boutique
+  start:
+    distribution: fixed
+    seconds: 100
+  alerts:
+  - role: cpu
+    alertname: SyntheticMetricCPU
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_cpu
+      metric_family: cpu
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 180
+    observation_delay_seconds: 5
+  - role: load
+    alertname: SyntheticMetricLoad
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_load
+      metric_family: load
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 15
+    duration:
+      distribution: fixed
+      seconds: 150
+    observation_delay_seconds: 8
+  - role: latency
+    alertname: SyntheticMetricLatency
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_latency
+      metric_family: latency
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 30
+    duration:
+      distribution: fixed
+      seconds: 120
+    observation_delay_seconds: 12
+  - role: memory-context
+    alertname: SyntheticMetricMemory
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_mem
+      metric_family: memory
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 40
+    duration:
+      distribution: fixed
+      seconds: 100
+    observation_delay_seconds: 15
+- incident_template_id: rcaeval-memory-pressure
+  reference_incident_id: incident-adservice-memory
+  target:
+    application: online-boutique
+  start:
+    distribution: fixed
+    seconds: 190
+  alerts:
+  - role: memory
+    alertname: SyntheticMetricMemory
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_mem
+      metric_family: memory
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 170
+    observation_delay_seconds: 5
+  - role: cpu-context
+    alertname: SyntheticMetricCPU
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_cpu
+      metric_family: cpu
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 20
+    duration:
+      distribution: fixed
+      seconds: 140
+    observation_delay_seconds: 9
+  - role: load
+    alertname: SyntheticMetricLoad
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_load
+      metric_family: load
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 30
+    duration:
+      distribution: fixed
+      seconds: 120
+    observation_delay_seconds: 11
+  - role: latency
+    alertname: SyntheticMetricLatency
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_latency
+      metric_family: latency
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 45
+    duration:
+      distribution: fixed
+      seconds: 100
+    observation_delay_seconds: 14
+- incident_template_id: rcaeval-disk-contention
+  reference_incident_id: incident-adservice-disk
+  target:
+    application: online-boutique
+  start:
+    distribution: fixed
+    seconds: 330
+  alerts:
+  - role: latency-p50
+    alertname: SyntheticMetricLatency
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_latency-50
+      metric_family: latency
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 160
+    observation_delay_seconds: 5
+  - role: latency-p90
+    alertname: SyntheticMetricLatency
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_latency-90
+      metric_family: latency
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 15
+    duration:
+      distribution: fixed
+      seconds: 140
+    observation_delay_seconds: 8
+  - role: error
+    alertname: SyntheticMetricError
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_error
+      metric_family: error
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 30
+    duration:
+      distribution: fixed
+      seconds: 120
+    observation_delay_seconds: 12
+  - role: workload
+    alertname: SyntheticMetricLoad
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_workload
+      metric_family: workload
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 45
+    duration:
+      distribution: fixed
+      seconds: 80
+    observation_delay_seconds: 15
+- incident_template_id: rcaeval-request-delay
+  reference_incident_id: incident-adservice-delay
+  target:
+    application: online-boutique
+  start:
+    distribution: fixed
+    seconds: 470
+  alerts:
+  - role: latency-p50
+    alertname: SyntheticMetricLatency
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_latency-50
+      metric_family: latency
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 110
+    observation_delay_seconds: 5
+  - role: latency-p90
+    alertname: SyntheticMetricLatency
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_latency-90
+      metric_family: latency
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 10
+    duration:
+      distribution: fixed
+      seconds: 100
+    observation_delay_seconds: 8
+  - role: workload
+    alertname: SyntheticMetricLoad
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_workload
+      metric_family: workload
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 20
+    duration:
+      distribution: fixed
+      seconds: 150
+    observation_delay_seconds: 12
+- incident_template_id: rcaeval-request-loss
+  reference_incident_id: incident-adservice-loss
+  target:
+    application: online-boutique
+  start:
+    distribution: fixed
+    seconds: 590
+  alerts:
+  - role: error
+    alertname: SyntheticMetricError
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: frontend_error
+      metric_family: error
+      service: frontend
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 0
+    duration:
+      distribution: fixed
+      seconds: 120
+    observation_delay_seconds: 5
+  - role: latency-p50
+    alertname: SyntheticMetricLatency
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_latency-50
+      metric_family: latency
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 10
+    duration:
+      distribution: fixed
+      seconds: 100
+    observation_delay_seconds: 8
+  - role: latency-p90
+    alertname: SyntheticMetricLatency
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_latency-90
+      metric_family: latency
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 20
+    duration:
+      distribution: fixed
+      seconds: 90
+    observation_delay_seconds: 12
+  - role: workload
+    alertname: SyntheticMetricLoad
+    namespace: rcaeval-online-boutique
+    labels:
+      application: online-boutique
+      metric: adservice_workload
+      metric_family: workload
+      service: adservice
+      severity: warning
+    delay:
+      distribution: fixed
+      seconds: 35
+    duration:
+      distribution: fixed
+      seconds: 70
+    observation_delay_seconds: 15
